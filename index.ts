@@ -1,5 +1,6 @@
-import { makeKey, makeResponse } from "./utils";
-
+// Description: A simple key-value cache using the browser cache API
+// ---------------------------------------------------------------
+// interface definition
 /** Cache duration in milliseconds */
 type milliseconds = number;
 export interface CacheHandlers<T> {
@@ -8,7 +9,29 @@ export interface CacheHandlers<T> {
   has(key: string): Promise<boolean>;
   remove(key: string): Promise<void>;
 }
+// ---------------------------------------------------------------
+// Helpers
+const makeResponse = (result: any, ttl: number) =>
+  new Response(JSON.stringify(result), {
+    headers: { timestamp: `${Date.now()}`, ttl: `${ttl}` },
+  });
+const isValidURL = (str: string) => {
+  try {
+    return !!new URL(str);
+  } catch (e) {
+    return false;
+  }
+};
+function makeKey(_key: string) {
+  const key = decodeURIComponent(_key);
+  if (isValidURL(key)) return key;
 
+  const u = new URL(window.location.origin);
+  u.searchParams.append("key", key);
+  return u.href;
+}
+// ---------------------------------------------------------------
+// implementation
 /**
  * @param namespace cache namespace
  */
@@ -16,6 +39,7 @@ export default function kvCache<T = any>(
   namespace = "key-value-cache"
 ): CacheHandlers<T> {
   const caches = window.caches;
+  console.log("caches", caches);
 
   return {
     async set(key: string, value: T, ttl: number) {
