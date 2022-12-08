@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+      "module": "es2020",
+      "lib": ["es2020", "dom"],
+      "target": "es2020",
+      "noImplicitReturns": true,
+      "esModuleInterop": true,
+      "outDir": "./dist",
+      "noEmit": false,
+      "sourceMap": true,
+      "moduleResolution": "node",
+      "allowSyntheticDefaultImports": true,
+      "inlineSources": true,
+      "sourceRoot": "/",
+      "strict": true,
+      "resolveJsonModule": true,
+      "skipLibCheck": true,
+      "declaration": true
+    },
+    "include": ["./index.ts"],
+    "exclude": ["node_modules"]
+  }
