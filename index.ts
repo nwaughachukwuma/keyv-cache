@@ -7,7 +7,7 @@ export interface CacheHandlers<T> {
   get(key: string): Promise<T | undefined>;
   set(key: string, value: T, ttl: milliseconds): Promise<void>;
   has(key: string): Promise<boolean>;
-  remove(key: string): Promise<void>;
+  remove(key: string): Promise<boolean>;
 }
 // ---------------------------------------------------------------
 // Helpers
@@ -22,6 +22,9 @@ const isValidURL = (str: string) => {
     return false;
   }
 };
+function isBrowser() {
+  return typeof window !== "undefined";
+}
 function makeKey(_key: string) {
   const key = decodeURIComponent(_key);
   if (isValidURL(key)) return key;
@@ -35,14 +38,15 @@ function makeKey(_key: string) {
 /**
  * @param namespace cache namespace
  */
-export default function kvCache<T = any>(
-  namespace = "key-value-cache"
-): CacheHandlers<T> {
+export default function cacheAPI<T = any>(
+  namespace = "lumiere-v4-dev"
+): CacheHandlers<T> | null {
+  if (!isBrowser()) return null;
+
   const caches = window.caches;
-  console.log("caches", caches);
 
   return {
-    async set(key: string, value: T, ttl: number) {
+    async set(key: string, value: T, ttl: milliseconds) {
       const cache = await caches.open(namespace);
       await cache.put(makeKey(key), makeResponse(value, ttl));
     },
@@ -74,7 +78,7 @@ export default function kvCache<T = any>(
     },
     async remove(key: string) {
       const cache = await caches.open(namespace);
-      await cache.delete(key);
+      return cache.delete(key);
     },
   };
 }
