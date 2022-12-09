@@ -78,7 +78,7 @@ export default function cacheAPI<T = any>(
     },
     async remove(key: string) {
       const cache = await caches.open(namespace);
-      return cache.delete(key);
+      return cache.delete(makeKey(key));
     },
   };
 }
