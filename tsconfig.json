@@ -5,7 +5,7 @@
       "target": "es2020",
       "noImplicitReturns": true,
       "esModuleInterop": true,
-      "outDir": "./dist",
+      "outDir": "./lib",
       "noEmit": false,
       "sourceMap": true,
       "moduleResolution": "node",
