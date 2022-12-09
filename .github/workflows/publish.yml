@@ -26,7 +26,9 @@ jobs:
       - name: get-tag-branch
         run: bash .github/scripts/tag_ref.sh ${{ github.ref }}
       - run: echo "${{ toJSON(env) }}"
+  
   test:
+    name: test on Node.js ${{ matrix.node-version }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: true
@@ -36,7 +38,8 @@ jobs:
           - 14
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v2
+      - name: Set Node.js 16.x
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
       - uses: actions/cache@v3
@@ -45,14 +48,18 @@ jobs:
           path: |
             **/node_modules
           key: ${{ runner.os }}-${{ matrix.node-version }}-modules-${{ hashFiles('**/yarn.lock') }}
-      - uses: borales/actions-yarn@v2.3.0
+      - uses: borales/actions-yarn@v4
         with:
           cmd: install
-      - run: yarn install
-      - run: yarn build
-      - run: yarn tsd
-      - name: Test ✅
-        run: yarn test
+      - uses: borales/actions-yarn@v4
+        with:
+          cmd: build
+      - uses: borales/actions-yarn@v4
+        with:
+          cmd: tsd
+      - uses: borales/actions-yarn@v4
+        with:
+          cmd: test
       - uses: actions/upload-artifact@v3
         with:
           name: lib
@@ -65,7 +72,7 @@ jobs:
     if: ${{ needs.prepare.outputs.TAG_BRANCH == 'main' && startsWith(github.ref, 'refs/tags/v') }}
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@3
         with:
           node-version: "14.x"
       - uses: actions/cache@v3
@@ -74,7 +81,7 @@ jobs:
           path: |
             **/node_modules
           key: ${{ runner.os }}-${{ matrix.node-version }}-modules-${{ hashFiles('**/yarn.lock') }}
-      - uses: borales/actions-yarn@v2.3.0
+      - uses: borales/actions-yarn@v4
         with:
           cmd: install
       - uses: actions/download-artifact@v3
