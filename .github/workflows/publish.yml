@@ -48,16 +48,20 @@ jobs:
           path: |
             **/node_modules
           key: ${{ runner.os }}-${{ matrix.node-version }}-modules-${{ hashFiles('**/yarn.lock') }}
-      - uses: borales/actions-yarn@v4
+      - name: install dependencies
+        uses: borales/actions-yarn@v4
         with:
           cmd: install
-      - uses: borales/actions-yarn@v4
+      - name: build
+        uses: borales/actions-yarn@v4
         with:
           cmd: build
-      - uses: borales/actions-yarn@v4
+      - name: test types
+        uses: borales/actions-yarn@v4
         with:
           cmd: tsd
-      - uses: borales/actions-yarn@v4
+      - name: test functionality
+        uses: borales/actions-yarn@v4
         with:
           cmd: test
       - uses: actions/upload-artifact@v3
