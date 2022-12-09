@@ -7,9 +7,9 @@
   "license": "MIT",
   "private": false,
   "type": "module",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "exports": "./dist/index.js",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "exports": "./lib/index.js",
   "sideEffects": false,
   "keywords": [
     "key/value cache",
@@ -21,13 +21,13 @@
     "automatic invalidation"
   ],
   "files": [
-    "dist"
+    "lib"
   ],
   "scripts": {
     "build": "tsc",
     "compile": "tsc -p .",
-    "tsd:prep": "cp index.test-d.ts ./dist/index.test-d.ts",
-    "tsd:clean": "rm ./dist/index.test-d.ts",
+    "tsd:prep": "cp index.test-d.ts ./lib/index.test-d.ts",
+    "tsd:clean": "rm ./lib/index.test-d.ts",
     "tsd": "yarn tsd:prep && tsd && yarn tsd:clean",
     "test": "jest"
   },
