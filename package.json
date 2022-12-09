@@ -1,13 +1,13 @@
 {
-  "name": "kv-cache",
-  "version": "0.0.1",
-  "description": "simple key/value cache using the browser cache-api",
-  "main": "./dist/index.js",
-  "repository": "git@github.com:nwaughachukwuma/kv-cache.git",
-  "author": "Chukwuma Nwaugha <nwaughac@gmail.com>",
-  "license": "MIT",
-  "private": false,
-  "type": "module",
+	"name": "keyv-cache",
+	"version": "0.0.1",
+	"description": "simple key/value cache using the browser cache-api",
+	"repository": "git@github.com:nwaughachukwuma/keyv-cache.git",
+	"author": "Chukwuma Nwaugha <nwaughac@gmail.com>",
+	"license": "MIT",
+	"private": false,
+	"type": "module",
+	"main": "./dist/index.js",
 	"types": "./dist/index.d.ts",
 	"exports": "./dist/index.js",
 	"sideEffects": false,
@@ -20,7 +20,7 @@
 		"ttl",
 		"automatic invalidation"
 	],
-  "files": [
+	"files": [
 		"dist"
 	],
 	"scripts": {
@@ -30,10 +30,10 @@
 		"tsd:clean": "rm ./dist/index.test-d.ts",
 		"test": "tsc && ava && yarn tsd"
 	},
-  "devDependencies": {
-    "ava": "^3.15.0",
+	"devDependencies": {
+		"ava": "^3.15.0",
 		"delay": "^5.0.0",
 		"tsd": "^0.17.0",
-    "typescript": "^4.9.4"
-  }
+		"typescript": "^4.9.4"
+	}
 }
