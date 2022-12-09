@@ -1,7 +1,7 @@
 import keyvCache from "../dist/index.js";
 
-let caches: ReturnType<typeof keyvCache> = null;
 function getCache() {
+  const caches = keyvCache();
   if (!caches) {
     throw new Error("caches is not defined");
   }
@@ -10,7 +10,6 @@ function getCache() {
 
 beforeAll(() => {
   global.caches = window.caches;
-  caches = keyvCache();
 });
 
 describe("base test", () => {
