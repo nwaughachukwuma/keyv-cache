@@ -1,4 +1,4 @@
-import keyvCache from "../dist/index.js";
+import keyvCache from "../lib/index.js";
 
 function getCache() {
   const caches = keyvCache();

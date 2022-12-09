@@ -1,5 +1,5 @@
 import delay from "delay";
-import keyvCache from "../dist/index.js";
+import keyvCache from "../lib/index.js";
 import CacheMock from "browser-cache-mock";
 
 const cacheMock = new CacheMock();
