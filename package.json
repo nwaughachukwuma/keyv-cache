@@ -1,7 +1,7 @@
 {
   "name": "keyv-cache",
   "version": "0.0.1",
-  "description": "simple key/value cache using the browser cache-api",
+  "description": "~1kb key/value store wrapper for the browser cache-api, with zero-dependency",
   "repository": "git@github.com:nwaughachukwuma/keyv-cache.git",
   "author": "Chukwuma Nwaugha <nwaughac@gmail.com>",
   "license": "MIT",
@@ -38,7 +38,6 @@
     "@types/jest": "^29.2.4",
     "babel-jest": "^29.3.1",
     "browser-cache-mock": "^0.1.7",
-    "browser-env": "^3.3.0",
     "delay": "^5.0.0",
     "jest": "^29.3.1",
     "jest-environment-jsdom": "^29.3.1",

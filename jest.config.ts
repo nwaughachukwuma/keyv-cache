@@ -12,16 +12,15 @@ export default {
   // An object that configures minimum threshold enforcement for coverage results
   coverageThreshold: {
     global: {
-      branches: 10,
-      functions: 10,
-      lines: 10,
-      statements: 10,
+      branches: 80,
+      functions: 90,
+      lines: 90,
+      statements: 90,
     },
   },
   // Make calling deprecated APIs throw helpful error messages
   errorOnDeprecated: true,
   setupFiles: ["./test/setup.cjs"],
-  testEnvironment: "jsdom",
 
   // The glob patterns Jest uses to detect test files
   // testMatch: [
