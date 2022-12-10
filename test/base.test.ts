@@ -1,3 +1,6 @@
+/**
+ * @jest-environment jsdom
+ */
 import keyvCache from "../lib/index.js";
 
 function getCache() {

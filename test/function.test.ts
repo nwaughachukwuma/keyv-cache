@@ -1,3 +1,6 @@
+/**
+ * @jest-environment jsdom
+ */
 import delay from "delay";
 import keyvCache from "../lib/index.js";
 import CacheMock from "browser-cache-mock";
@@ -32,6 +35,10 @@ describe("base test", () => {
   test("can set and get", async () => {
     const caches = getCache();
     await caches.set("myKey", "myValue", 1000); // Set a TTL of 1 second
+
+    // get the wrong key
+    const wrongValue = await caches.get("myKey2");
+    expect(wrongValue).toBe(null);
 
     const value = await caches.get("myKey");
     expect(value).toBe("myValue");
