@@ -60,14 +60,9 @@ export default function KeyvCache<T = any>(
       const response = await cache.match(key);
       if (!response?.ok) return null;
 
-      const timestamp = response.headers.get("timestamp");
-      const ttl = response.headers.get("ttl");
-      if (!timestamp || !ttl) {
-        await this.remove(key);
-        return null;
-      }
-
       const now = Date.now();
+      const timestamp = response.headers.get("timestamp") || now;
+      const ttl = response.headers.get("ttl") || 0;
       if (+ttl + +timestamp < now) {
         await this.remove(key);
         return null;
