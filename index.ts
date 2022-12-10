@@ -73,7 +73,7 @@ export default function KeyvCache<T = any>(
         return null;
       }
 
-      return response.json();
+      return response.clone().json();
     },
     async has(key: string) {
       const cache = await caches.open(namespace);
