@@ -1,6 +1,7 @@
 // Description: A simple key-value cache using the browser cache API
 // ---------------------------------------------------------------
-// interface definition
+// Interfaces
+
 /** Cache duration in milliseconds */
 type milliseconds = number;
 export interface CacheHandlers<T> {
@@ -14,17 +15,18 @@ export interface CacheOptions {
 }
 // ---------------------------------------------------------------
 // Helpers
-const makeResponse = (result: any, ttl: number) =>
-  new Response(JSON.stringify(result), {
+function makeResponse(result: any, ttl: number) {
+  return new Response(JSON.stringify(result), {
     headers: { timestamp: `${Date.now()}`, ttl: `${ttl}` },
   });
-const isValidURL = (str: string) => {
+}
+function isValidURL(str: string) {
   try {
     return !!new URL(str);
   } catch (e) {
     return false;
   }
-};
+}
 function isBrowser() {
   return typeof window !== "undefined";
 }
