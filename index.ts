@@ -9,6 +9,9 @@ export interface CacheHandlers<T> {
   has(key: string): Promise<boolean>;
   remove(key: string): Promise<boolean>;
 }
+export interface CacheOptions {
+  namespace?: string;
+}
 // ---------------------------------------------------------------
 // Helpers
 const makeResponse = (result: any, ttl: number) =>
@@ -38,11 +41,12 @@ function makeKey(_key: string) {
 /**
  * @param namespace cache namespace
  */
-export default function cacheAPI<T = any>(
-  namespace = "lumiere-v4-dev"
+export default function KeyvCache<T = any>(
+  opt?: CacheOptions
 ): CacheHandlers<T> | null {
   if (!isBrowser()) return null;
 
+  const namespace = opt?.namespace || "keyv-cache";
   const caches = window.caches;
 
   return {
