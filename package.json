@@ -21,14 +21,14 @@
     "automatic invalidation"
   ],
   "files": [
-    "lib"
+    "lib",
+    "!lib/index.test-d.ts"
   ],
   "scripts": {
     "build": "tsc",
     "compile": "tsc -p .",
     "tsd:prep": "cp index.test-d.ts ./lib/index.test-d.ts",
-    "tsd:clean": "rm ./lib/index.test-d.ts",
-    "tsd": "yarn tsd:prep && tsd && yarn tsd:clean",
+    "tsd": "yarn tsd:prep && tsd",
     "test": "jest"
   },
   "devDependencies": {
