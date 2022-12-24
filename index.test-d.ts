@@ -19,4 +19,6 @@ if (cache) {
   expectType<Promise<void>>(cache.set("key", "value", 1000));
   expectType<Promise<boolean>>(cache.has("key"));
   expectType<Promise<boolean>>(cache.remove("key"));
+  expectType<Promise<boolean[]>>(cache.removePattern("key"));
+  expectType<Promise<string[]>>(cache.keys());
 }
