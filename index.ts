@@ -9,6 +9,8 @@ export interface CacheHandlers<T> {
   set(key: string, value: T, ttl: milliseconds): Promise<void>;
   has(key: string): Promise<boolean>;
   remove(key: string): Promise<boolean>;
+  removePattern(pattern: string): Promise<Array<boolean>>;
+  keys(): Promise<string[]>;
 }
 export interface CacheOptions {
   namespace?: string;
@@ -80,6 +82,16 @@ export default function KeyvCache<T = any>(
     async remove(key: string) {
       const cache = await caches.open(namespace);
       return cache.delete(makeKey(key));
+    },
+    async removePattern(pattern: string) {
+      const cache = await caches.open(namespace);
+      const keys = await cache.keys();
+      const keysToDelete = keys.filter((k) => k.url.includes(pattern));
+      return Promise.all(keysToDelete.map((k) => cache.delete(k)));
+    },
+    async keys() {
+      const cache = await caches.open(namespace);
+      return cache.keys().then((keys) => keys.map((k) => k.url));
     },
   };
 }
