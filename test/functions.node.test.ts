@@ -3,8 +3,8 @@
  */
 import keyvCache from "../lib/index.js";
 
-describe("base test", () => {
-  test("can set and check", async () => {
+describe("test in node.js environment", () => {
+  test("expect caches to be null", async () => {
     const caches = keyvCache();
     expect(caches).toBeNull();
   });
