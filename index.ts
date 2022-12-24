@@ -17,22 +17,22 @@ export interface CacheOptions {
 }
 // ---------------------------------------------------------------
 // Helpers
-function makeResponse(result: any, ttl: number) {
+export function makeResponse(result: any, ttl: number) {
   return new Response(JSON.stringify(result), {
     headers: { timestamp: `${Date.now()}`, ttl: `${ttl}` },
   });
 }
-function isValidURL(str: string) {
+export function isValidURL(str: string) {
   try {
     return !!new URL(str);
   } catch (e) {
     return false;
   }
 }
-function isBrowser() {
+export function isBrowser() {
   return typeof window !== "undefined";
 }
-function makeKey(_key: string) {
+export function makeKey(_key: string) {
   const key = decodeURIComponent(_key);
   if (isValidURL(key)) return key;
 
@@ -75,9 +75,7 @@ export default function KeyvCache<T = any>(
       return response.clone().json();
     },
     async has(key: string) {
-      const cache = await caches.open(namespace);
-      const response = await cache.match(makeKey(key));
-      return !!response?.ok;
+      return !!(await this.get(key));
     },
     async remove(key: string) {
       const cache = await caches.open(namespace);
