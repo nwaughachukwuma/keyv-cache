@@ -22,90 +22,90 @@ beforeAll(() => {
 });
 
 function getCache(namespace?: string) {
-  const caches = keyvCache({ namespace });
-  if (!caches) {
-    throw new Error("caches is not defined");
+  const cache = keyvCache({ namespace });
+  if (!cache) {
+    throw new Error("cache is not defined");
   }
-  return caches;
+  return cache;
 }
 
 describe("functions test for browser environment", () => {
   describe("functionality test", () => {
     test("can set item in the cache", async () => {
-      const caches = getCache();
-      await caches.set("myKey", "myValue", 3000); // Set a TTL of 1 second
+      const cache = getCache();
+      await cache.set("myKey", "myValue", 3000); // Set a TTL of 1 second
 
-      const hasKey = await caches.has("myKey");
+      const hasKey = await cache.has("myKey");
       expect(hasKey).toBe(true);
     });
 
     test("can get cache item", async () => {
-      const caches = getCache();
-      await caches.set("myKey", "myValue", 3000); // Set a TTL of 1 second
+      const cache = getCache();
+      await cache.set("myKey", "myValue", 3000); // Set a TTL of 1 second
 
       // get the wrong key
-      const wrongValue = await caches.get("myKey2");
+      const wrongValue = await cache.get("myKey2");
       expect(wrongValue).toBe(null);
 
-      const value = await caches.get("myKey");
+      const value = await cache.get("myKey");
       expect(value).toBe("myValue");
     });
 
     test("cache item is automatically removed after TTL", async () => {
-      const caches = getCache();
-      await caches.set("myKey", "myValue", 1000); // Set a TTL of 1 second
+      const cache = getCache();
+      await cache.set("myKey", "myValue", 1000); // Set a TTL of 1 second
 
       await delay(2000); // Wait 2 seconds
 
-      const hasKey = await caches.has("myKey");
+      const hasKey = await cache.has("myKey");
       expect(hasKey).toBe(false);
     });
 
     test("calling remove on cache item deletes it from the cache", async () => {
-      const caches = getCache();
-      await caches.set("myKey", "myValue", 3000); // Set a TTL of 3 seconds
+      const cache = getCache();
+      await cache.set("myKey", "myValue", 3000); // Set a TTL of 3 seconds
 
-      const hasKey1 = await caches.has("myKey");
+      const hasKey1 = await cache.has("myKey");
       expect(hasKey1).toBe(true);
 
-      await caches.remove("myKey");
+      await cache.remove("myKey");
 
-      const hasKey2 = await caches.has("myKey");
+      const hasKey2 = await cache.has("myKey");
       expect(hasKey2).toBe(false);
     });
 
     test("can remove cache item by pattern", async () => {
-      const caches = getCache();
-      await caches.set("myKey", "myValue", 3000);
+      const cache = getCache();
+      await cache.set("myKey", "myValue", 3000);
 
-      const hasKey = await caches.has("myKey");
+      const hasKey = await cache.has("myKey");
       expect(hasKey).toBe(true);
 
-      await caches.removePattern("myKey");
+      await cache.removePattern("myKey");
 
-      const hasKey2 = await caches.has("myKey");
+      const hasKey2 = await cache.has("myKey");
       expect(hasKey2).toBe(false);
     });
 
     test("can retrieve all namespaced keys in the cache", async () => {
-      const caches = getCache();
+      const cache = getCache();
 
       const key = makeKey("myKey");
-      await caches.set(key, "myValue", 3000);
-      const keys = await caches.keys();
+      await cache.set(key, "myValue", 3000);
+      const keys = await cache.keys();
       expect(keys).toContain(key);
     });
 
     test("can delete cache by namespace", async () => {
-      const caches = getCache();
-      await caches.set("myKey", "myValue", 3000);
+      const cache = getCache();
+      await cache.set("myKey", "myValue", 3000);
 
-      const hasKey = await caches.has("myKey");
+      const hasKey = await cache.has("myKey");
       expect(hasKey).toBe(true);
 
-      await caches.clear();
+      await cache.clear();
 
-      const hasKey2 = await caches.has("myKey");
+      const hasKey2 = await cache.has("myKey");
       expect(hasKey2).toBe(false);
     });
   });
