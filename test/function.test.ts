@@ -65,26 +65,22 @@ describe("functions test for browser environment", () => {
       const cache = getCache();
       await cache.set("myKey", "myValue", 3000); // Set a TTL of 3 seconds
 
-      const hasKey1 = await cache.has("myKey");
-      expect(hasKey1).toBe(true);
+      expect(await cache.has("myKey")).toBe(true);
 
       await cache.remove("myKey");
 
-      const hasKey2 = await cache.has("myKey");
-      expect(hasKey2).toBe(false);
+      expect(await cache.has("myKey")).toBe(false);
     });
 
     test("can remove cache item by pattern", async () => {
       const cache = getCache();
       await cache.set("myKey", "myValue", 3000);
 
-      const hasKey = await cache.has("myKey");
-      expect(hasKey).toBe(true);
+      expect(await cache.has("myKey")).toBe(true);
 
-      await cache.removePattern("myKey");
+      await cache.removePattern("myK");
 
-      const hasKey2 = await cache.has("myKey");
-      expect(hasKey2).toBe(false);
+      expect(await cache.has("myKey")).toBe(false);
     });
 
     test("can retrieve all namespaced keys in the cache", async () => {
@@ -96,17 +92,14 @@ describe("functions test for browser environment", () => {
       expect(keys).toContain(key);
     });
 
-    test("can delete cache by namespace", async () => {
+    test("can delete a cache namespace", async () => {
       const cache = getCache();
       await cache.set("myKey", "myValue", 3000);
 
-      const hasKey = await cache.has("myKey");
-      expect(hasKey).toBe(true);
+      expect(await cache.has("myKey")).toBe(true);
 
       await cache.clear();
-
-      const hasKey2 = await cache.has("myKey");
-      expect(hasKey2).toBe(false);
+      expect(await cache.has("myKey")).toBe(false);
     });
   });
 
@@ -115,13 +108,22 @@ describe("functions test for browser environment", () => {
       const cache = getCache("my-namespace");
       await cache.set("myKey", "myValue", 3000);
 
-      // can get item in same cache
-      const hasKey1 = await cache.has("myKey");
-      expect(hasKey1).toBe(true);
+      expect(await cache.has("myKey")).toBe(true);
 
       const cache2 = getCache("another-namespace");
-      const hasKey2 = await cache2.has("myKey");
-      expect(hasKey2).toBe(false);
+      expect(await cache2.has("myKey")).toBe(false);
+    });
+
+    test("cannot delete item on another namespace", async () => {
+      const cache = getCache("my-namespace");
+      await cache.set("myKey", "myValue", 3000);
+
+      expect(await cache.has("myKey")).toBe(true);
+
+      const cache2 = getCache("another-namespace");
+      await cache2.remove("myKey");
+
+      expect(await cache.has("myKey")).toBe(true);
     });
   });
 });
