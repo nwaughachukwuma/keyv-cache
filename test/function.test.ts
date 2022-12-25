@@ -6,11 +6,17 @@ import keyvCache, { makeKey } from "../lib/index.js";
 import CacheMock from "browser-cache-mock";
 
 const cacheMock = new CacheMock();
+const cacheDeleteMock = jest.fn(async () => {
+  const keys = await cacheMock.keys();
+  await Promise.all(keys.map((k) => cacheMock.delete(k)));
+  return true;
+});
 beforeAll(() => {
   window.caches = {
     ...window.caches,
     ...cacheMock,
     open: async () => cacheMock,
+    delete: cacheDeleteMock,
   };
   global.window.caches = window.caches;
 });
@@ -23,7 +29,7 @@ function getCache(namespace?: string) {
   return caches;
 }
 
-describe("functions test for the browser environment", () => {
+describe("functions test for browser environment", () => {
   describe("functionality test", () => {
     test("can set item in the cache", async () => {
       const caches = getCache();
