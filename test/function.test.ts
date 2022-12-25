@@ -6,9 +6,11 @@ import KeyvCache, { makeKey } from "../lib/index.js";
 import CacheMock from "browser-cache-mock";
 
 const cacheMock = new CacheMock();
-const cacheDeleteMock = jest.fn(async () => {
+const cacheDeleteMock = jest.fn(async (namespace) => {
   const keys = await cacheMock.keys();
-  await Promise.all(keys.map((k) => cacheMock.delete(k)));
+  const nsKeys = keys.filter((k) => k.url.includes(namespace));
+  await Promise.all(nsKeys.map((k) => cacheMock.delete(k)));
+
   return true;
 });
 beforeAll(() => {
@@ -124,6 +126,19 @@ describe("functions test for browser environment", () => {
       await cache2.remove("myKey");
 
       expect(await cache.has("myKey")).toBe(true);
+    });
+
+    test("clearing one namespace doesn't affect others", async () => {
+      const cache = getCache("my-namespace");
+      await cache.set("myKey", "myValue", 3000);
+
+      const cache2 = getCache("another-namespace");
+      await cache2.set("otherKey", "otherValue", 3000);
+
+      await cache.clear();
+
+      expect(await cache.has("myKey")).toBe(false);
+      expect(await cache2.has("otherKey")).toBe(true);
     });
   });
 });
