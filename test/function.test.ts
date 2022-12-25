@@ -109,4 +109,19 @@ describe("functions test for browser environment", () => {
       expect(hasKey2).toBe(false);
     });
   });
+
+  describe("test namespacing", () => {
+    test("cannot get item from another namespace", async () => {
+      const cache = getCache("my-namespace");
+      await cache.set("myKey", "myValue", 3000);
+
+      // can get item in same cache
+      const hasKey1 = await cache.has("myKey");
+      expect(hasKey1).toBe(true);
+
+      const cache2 = getCache("another-namespace");
+      const hasKey2 = await cache2.has("myKey");
+      expect(hasKey2).toBe(false);
+    });
+  });
 });
