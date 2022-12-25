@@ -9,14 +9,14 @@ const cacheMock = new CacheMock();
 beforeAll(() => {
   window.caches = {
     ...window.caches,
-    open: async () => cacheMock,
     ...cacheMock,
+    open: async () => cacheMock,
   };
   global.window.caches = window.caches;
 });
 
-function getCache() {
-  const caches = keyvCache();
+function getCache(namespace?: string) {
+  const caches = keyvCache({ namespace });
   if (!caches) {
     throw new Error("caches is not defined");
   }
@@ -88,6 +88,19 @@ describe("functions test for the browser environment", () => {
       await caches.set(key, "myValue", 3000);
       const keys = await caches.keys();
       expect(keys).toContain(key);
+    });
+
+    test("can delete cache by namespace", async () => {
+      const caches = getCache();
+      await caches.set("myKey", "myValue", 3000);
+
+      const hasKey = await caches.has("myKey");
+      expect(hasKey).toBe(true);
+
+      await caches.clear();
+
+      const hasKey2 = await caches.has("myKey");
+      expect(hasKey2).toBe(false);
     });
   });
 });
