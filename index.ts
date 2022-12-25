@@ -11,6 +11,7 @@ export interface CacheHandlers<T> {
   remove(key: string): Promise<boolean>;
   removePattern(pattern: string): Promise<Array<boolean>>;
   keys(): Promise<string[]>;
+  clear(): Promise<boolean>;
 }
 export interface CacheOptions {
   namespace?: string;
@@ -91,5 +92,6 @@ export default function KeyvCache<T = any>(
       const cache = await caches.open(namespace);
       return cache.keys().then((keys) => keys.map((k) => k.url));
     },
+    clear: () => caches.delete(namespace),
   };
 }
