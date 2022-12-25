@@ -1,14 +1,14 @@
 
 # Keyv-cache 🚀
 
- A ~1kb `key/value` wrapper for the browser [Cache API](https://developer.mozilla.org/en-US/docs/Web/API/Cache), with zero-dependency.
+ A ~1kb `key/value` wrapper for the browser [Cache API](https://developer.mozilla.org/en-US/docs/Web/API/Cache) with zero dependencies.
 
 ## Key Features
 
 - ❌ Zero dependencies
 - 📏 Less than 1kb in size
 - 🤓 Easy to use API
-- 🔒 Supports namespaced caches for separation of different parts of your application
+- 🔒 Supports name-spacing for the separation of different parts of your application
 
 ## Installation
 
@@ -45,7 +45,7 @@ KeyvCache(options)
 
 An object that can contain the following options:
 
-**🔑 namespace**: The cache name is used to create unique cache storage spaces.
+**🔑 namespace**: The cache name creates unique cache storage spaces.
 
 ### cache object
 
@@ -53,17 +53,17 @@ The object returned by KeyvCache for a specified namespace has the following met
 
 #### set(key: string, value: any, ttl: number) => Promise<void>
 
-Sets the value for the given key in a cache namespace. The value will be invalidated and deleted from the cache after the specified time-to-live (TTL) is exceeded.
+Sets the value for the given key in a cache namespace. The value will be invalidated and deleted from the cache after the specified time-to-live (TTL).
 
 **🔑 key**: The key to set in a cache namespace.
 
-**value**: The value to set for the given key. This is any value that can be serialized into a string.
+**value**: This is any value that can be serialized into a string.
 
-**⏳ ttl**: The time-to-live for the cache entry, in milliseconds.
+**⏳ ttl**: The time-to-live for the cache entry in milliseconds.
 
 #### get(key: string) => Promise<any>
 
-Retrieves the value for the given key from a cache namespace. Return `null` if the key does not exist or entry is expired.
+Retrieves the value for the given key from a cache namespace. Return `null` if the key does not exist, or the entry is expired.
 
 **key**: The key to retrieve from the cache.
 
