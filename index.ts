@@ -49,24 +49,25 @@ export function makeKey(_key: string, namespace: string = DEFAULT_NAMESPACE) {
  * @param namespace cache namespace
  */
 export default class KeyvCache<T> implements CacheHandlers<T> {
-  private namespace: string;
+  /** cache namespace */
+  private ns: string;
   public caches: CacheStorage;
 
   constructor(opt?: CacheOptions) {
     if (!isBrowser()) {
       throw new ReferenceError("keyv-cache only works in the browser");
     }
-    this.namespace = opt?.namespace || DEFAULT_NAMESPACE;
+    this.ns = opt?.namespace || DEFAULT_NAMESPACE;
     this.caches = window.caches;
   }
 
   async set(key: string, value: T, ttl: milliseconds) {
-    const cache = await caches.open(this.namespace);
-    await cache.put(makeKey(key, this.namespace), makeResponse(value, ttl));
+    const cache = await caches.open(this.ns);
+    await cache.put(makeKey(key, this.ns), makeResponse(value, ttl));
   }
   async get(_key: string) {
-    const key = makeKey(_key, this.namespace);
-    const cache = await caches.open(this.namespace);
+    const key = makeKey(_key, this.ns);
+    const cache = await caches.open(this.ns);
     const response = await cache.match(key);
     if (!response?.ok) return null;
 
@@ -84,20 +85,20 @@ export default class KeyvCache<T> implements CacheHandlers<T> {
     return !!(await this.get(key));
   }
   async remove(key: string) {
-    const cache = await caches.open(this.namespace);
-    return cache.delete(makeKey(key, this.namespace));
+    const cache = await caches.open(this.ns);
+    return cache.delete(makeKey(key, this.ns));
   }
   async removePattern(pattern: string) {
-    const cache = await caches.open(this.namespace);
+    const cache = await caches.open(this.ns);
     const keys = await cache.keys();
     const keysToDelete = keys.filter((k) => k.url.includes(pattern));
     return Promise.all(keysToDelete.map((k) => cache.delete(k)));
   }
   async keys() {
-    const cache = await caches.open(this.namespace);
+    const cache = await caches.open(this.ns);
     return cache.keys().then((keys) => keys.map((k) => k.url));
   }
   clear() {
-    return caches.delete(this.namespace);
+    return caches.delete(this.ns);
   }
 }
