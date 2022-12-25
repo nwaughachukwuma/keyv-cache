@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import delay from "delay";
-import keyvCache, { makeKey } from "../lib/index.js";
+import KeyvCache, { makeKey } from "../lib/index.js";
 import CacheMock from "browser-cache-mock";
 
 const cacheMock = new CacheMock();
@@ -22,7 +22,7 @@ beforeAll(() => {
 });
 
 function getCache(namespace?: string) {
-  const cache = keyvCache({ namespace });
+  const cache = new KeyvCache({ namespace });
   if (!cache) {
     throw new Error("cache is not defined");
   }

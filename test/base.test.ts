@@ -1,10 +1,10 @@
 /**
  * @jest-environment jsdom
  */
-import keyvCache from "../lib/index.js";
+import KeyvCache from "../lib/index.js";
 
 function getCache() {
-  const caches = keyvCache();
+  const caches = new KeyvCache();
   if (!caches) {
     throw new Error("caches is not defined");
   }
@@ -54,10 +54,5 @@ describe("base test", () => {
   test("caches has clear method", () => {
     const caches = getCache();
     expect(caches.clear).not.toBeNull();
-  });
-
-  test("caches has ref method", () => {
-    const caches = getCache();
-    expect(caches.ref).not.toBeNull();
   });
 });

@@ -1,11 +1,19 @@
 /**
  * @jest-environment node
  */
-import keyvCache from "../lib/index.js";
+import KeyvCache from "../lib/index.js";
 
 describe("test in node.js environment", () => {
-  test("expect caches to be null", async () => {
-    const caches = keyvCache();
-    expect(caches).toBeNull();
+  test("must be invoked with 'new' keyword", async () => {
+    expect(KeyvCache).toThrow(
+      "Class constructor KeyvCache cannot be invoked without 'new'"
+    );
+  });
+  test("throws reference error in node environment", async () => {
+    try {
+      new KeyvCache();
+    } catch (error) {
+      expect(error).toBeInstanceOf(ReferenceError);
+    }
   });
 });
