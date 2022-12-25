@@ -31,7 +31,7 @@ describe("base test", () => {
     expect(caches.get).not.toBeNull();
   });
 
-  test("caches has has method", () => {
+  test("caches has 'has' method", () => {
     const caches = getCache();
     expect(caches.has).not.toBeNull();
   });
@@ -39,5 +39,25 @@ describe("base test", () => {
   test("caches has remove method", () => {
     const caches = getCache();
     expect(caches.remove).not.toBeNull();
+  });
+
+  test("caches has keys method", () => {
+    const caches = getCache();
+    expect(caches.keys).not.toBeNull();
+  });
+
+  test("caches has removePattern method", () => {
+    const caches = getCache();
+    expect(caches.removePattern).not.toBeNull();
+  });
+
+  test("caches has clear method", () => {
+    const caches = getCache();
+    expect(caches.clear).not.toBeNull();
+  });
+
+  test("caches has ref method", () => {
+    const caches = getCache();
+    expect(caches.ref).not.toBeNull();
   });
 });
