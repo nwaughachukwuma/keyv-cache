@@ -22,8 +22,8 @@ npm install keyv-cache
 
 ```js
 
-import  KeyvCache  from  'keyv-cache';
-const  cache  =  KeyvCache({namespace:  'my-app'});
+import KeyvCache from 'keyv-cache';
+const cache = new KeyvCache({namespace:  'my-app'});
 
 // within an async function
 const  ONE_HOUR  =  60  *  60  *  1000;
@@ -45,36 +45,50 @@ KeyvCache(options)
 
 An object that can contain the following options:
 
-**🔑 namespace**: The namespace to use for the cache. This can be used to separate different parts of your application into different caches.
+**🔑 namespace**: The cache name is used to create unique cache storage spaces.
 
 ### cache object
 
-The object returned by KeyvCache has the following methods:
+The object returned by KeyvCache for a specified namespace has the following methods:
 
 #### set(key: string, value: any, ttl: number) => Promise<void>
 
-Sets the value for the given key in the cache. The value will be invalidated and deleted from the cache after the specified time-to-live (TTL) has passed.
+Sets the value for the given key in a cache namespace. The value will be invalidated and deleted from the cache after the specified time-to-live (TTL) is exceeded.
 
-**🔑 key**: The key to set in the cache.
+**🔑 key**: The key to set in a cache namespace.
 
-**value**: The value to set for the given key. This can be any JavaScript value that can be serialized to a string.
+**value**: The value to set for the given key. This is any value that can be serialized into a string.
 
 **⏳ ttl**: The time-to-live for the cache entry, in milliseconds.
 
 #### get(key: string) => Promise<any>
 
-Retrieves the value for the given key from the cache. If the key does not exist or the entry has expired, null will be returned.
+Retrieves the value for the given key from a cache namespace. Return `null` if the key does not exist or entry is expired.
 
 **key**: The key to retrieve from the cache.
 
 #### has(key: string) => Promise<boolean>
 
-Checks if the given key exists in the cache.
+Checks if the given key exists in a cache namespace.
 
 **key**: The key to check for in the cache.
 
 #### remove(key: string) => Promise<void>
 
-Removes the given key from the cache.
+Removes the given key from a cache namespace.
 
 **key**: The key to remove from the cache.
+
+#### removePattern(pattern: string) => Promise<void>
+
+Removes all keys from a cache namespace that match the given pattern.
+
+**pattern**: The string to match against the keys in the cache. Support for regex patterns is coming soon.
+
+#### keys() => Promise<string[]>
+
+Retrieves all keys from a cache namespace.
+
+#### clear() => Promise<void>
+
+Removes all keys from a cache namespace.
