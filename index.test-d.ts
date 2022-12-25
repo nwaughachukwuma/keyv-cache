@@ -1,13 +1,10 @@
 import { expectType, expectAssignable } from "tsd";
 import KeyvCache, { CacheHandlers } from "./index";
 
-const cache = new KeyvCache();
-expectType<CacheHandlers<any> | null>(cache);
+const cache = new KeyvCache<any>();
+expectAssignable<CacheHandlers<any>>(cache);
 
 if (cache) {
-  expectType<CacheHandlers<any>>(cache);
-  expectAssignable<CacheHandlers<any>>(cache);
-
   // check the method signatures
   expectType<CacheHandlers<any>["get"]>(cache.get);
   expectType<CacheHandlers<any>["set"]>(cache.set);
