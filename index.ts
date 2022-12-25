@@ -12,6 +12,7 @@ export interface CacheHandlers<T> {
   removePattern(pattern: string): Promise<Array<boolean>>;
   keys(): Promise<string[]>;
   clear(): Promise<boolean>;
+  ref: CacheStorage;
 }
 export interface CacheOptions {
   namespace?: string;
@@ -33,11 +34,13 @@ export function isValidURL(str: string) {
 export function isBrowser() {
   return typeof window !== "undefined";
 }
-export function makeKey(_key: string) {
+const DEFAULT_NAMESPACE = "keyv-cache";
+export function makeKey(_key: string, namespace: string = DEFAULT_NAMESPACE) {
   const key = decodeURIComponent(_key);
   if (isValidURL(key)) return key;
 
   const u = new URL(window.location.origin);
+  u.searchParams.append("namespace", namespace);
   u.searchParams.append("key", key);
   return u.href;
 }
@@ -51,7 +54,7 @@ export default function KeyvCache<T = any>(
 ): CacheHandlers<T> | null {
   if (!isBrowser()) return null;
 
-  const namespace = opt?.namespace || "keyv-cache";
+  const namespace = opt?.namespace || DEFAULT_NAMESPACE;
   const caches = window.caches;
 
   return {
@@ -93,5 +96,6 @@ export default function KeyvCache<T = any>(
       return cache.keys().then((keys) => keys.map((k) => k.url));
     },
     clear: () => caches.delete(namespace),
+    ref: caches,
   };
 }
