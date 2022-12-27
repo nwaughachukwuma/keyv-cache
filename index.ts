@@ -51,14 +51,15 @@ export function makeKey(_key: string, namespace: string = DEFAULT_NAMESPACE) {
 export default class KeyvCache<T> implements CacheHandlers<T> {
   /** cache namespace */
   private ns: string;
-  public caches: CacheStorage;
-
   constructor(opt?: CacheOptions) {
+    this.ns = opt?.namespace || DEFAULT_NAMESPACE;
+  }
+
+  get caches() {
     if (!isBrowser()) {
       throw new ReferenceError("keyv-cache only works in the browser");
     }
-    this.ns = opt?.namespace || DEFAULT_NAMESPACE;
-    this.caches = window.caches;
+    return window.caches;
   }
 
   async set(key: string, value: T, ttl: milliseconds) {

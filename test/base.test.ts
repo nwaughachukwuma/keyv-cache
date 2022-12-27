@@ -55,4 +55,9 @@ describe("base test", () => {
     const caches = getCache();
     expect(caches.clear).not.toBeNull();
   });
+
+  test("can access internal caches", async () => {
+    const scopedCaches = () => getCache().caches;
+    expect(scopedCaches).not.toThrow();
+  });
 });

@@ -9,11 +9,9 @@ describe("test in node.js environment", () => {
       "Class constructor KeyvCache cannot be invoked without 'new'"
     );
   });
-  test("throws reference error in node environment", async () => {
-    try {
-      new KeyvCache();
-    } catch (error) {
-      expect(error).toBeInstanceOf(ReferenceError);
-    }
+  test("attempting to access internal caches throws reference error in node environment", async () => {
+    const caches = new KeyvCache();
+    const scopedCaches = () => caches.caches;
+    expect(scopedCaches).toThrow(ReferenceError);
   });
 });
