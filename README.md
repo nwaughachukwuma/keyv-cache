@@ -54,8 +54,11 @@ The object returned by KeyvCache for a specified namespace has the following met
 #### set(key: string, value: any, ttl: number) => Promise<void>
 
 > Stored value will be invalidated and deleted from the cache after the specified time-to-live (TTL).
+>
 > **🔑 key**: The key to set in a cache namespace.
+>
 > **📦 value**: This is any value that can be serialized into a string.
+>
 > **⏳ ttl**: The time-to-live for the cache entry in milliseconds.
 
 #### get(key: string) => Promise<any>
