@@ -41,6 +41,20 @@ describe("functions test for browser environment", () => {
       expect(hasKey).toBe(true);
     });
 
+    test("can set item using plain string as key", async () => {
+      const cache = getCache();
+      await cache.set("myKey", "myValue", 3000);
+      expect(await cache.has("myKey")).toBe(true);
+    });
+
+    test("can set item using url as key", async () => {
+      const cache = getCache();
+
+      const key = "http://localhost:3000/display?key=myKey";
+      await cache.set(key, "myValue", 3000);
+      expect(await cache.has(key)).toBe(true);
+    });
+
     test("can get cache item", async () => {
       const cache = getCache();
       await cache.set("myKey", "myValue", 3000); // Set a TTL of 1 second
@@ -88,10 +102,11 @@ describe("functions test for browser environment", () => {
     test("can retrieve all namespaced keys in the cache", async () => {
       const cache = getCache();
 
-      const key = makeKey("myKey");
+      const key = "myKey";
       await cache.set(key, "myValue", 3000);
       const keys = await cache.keys();
-      expect(keys).toContain(key);
+      expect(keys).toHaveLength(1);
+      expect(keys).toContain(makeKey(key));
     });
 
     test("can delete a cache namespace", async () => {

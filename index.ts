@@ -36,12 +36,7 @@ export function isBrowser() {
 const DEFAULT_NAMESPACE = "keyv-cache";
 export function makeKey(_key: string, namespace: string = DEFAULT_NAMESPACE) {
   const key = decodeURIComponent(_key);
-  if (isValidURL(key)) return key;
-
-  const u = new URL(window.location.origin);
-  u.searchParams.append("namespace", namespace);
-  u.searchParams.append("key", key);
-  return u.href;
+  return isValidURL(key) ? key : key + `?namespace=${namespace}`;
 }
 // ---------------------------------------------------------------
 // implementation
