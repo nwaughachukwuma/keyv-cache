@@ -62,12 +62,12 @@ export default class KeyvCache<T> implements CacheHandlers<T> {
   }
 
   async set(key: string, value: T, ttl: milliseconds) {
-    const cache = await caches.open(this.ns);
+    const cache = await this.caches.open(this.ns);
     await cache.put(makeKey(key, this.ns), makeResponse(value, ttl));
   }
   async get(_key: string) {
     const key = makeKey(_key, this.ns);
-    const cache = await caches.open(this.ns);
+    const cache = await this.caches.open(this.ns);
     const response = await cache.match(key);
     if (!response?.ok) return null;
 
@@ -85,20 +85,20 @@ export default class KeyvCache<T> implements CacheHandlers<T> {
     return !!(await this.get(key));
   }
   async remove(key: string) {
-    const cache = await caches.open(this.ns);
+    const cache = await this.caches.open(this.ns);
     return cache.delete(makeKey(key, this.ns));
   }
   async removePattern(pattern: string) {
-    const cache = await caches.open(this.ns);
+    const cache = await this.caches.open(this.ns);
     const keys = await cache.keys();
     const keysToDelete = keys.filter((k) => k.url.includes(pattern));
     return Promise.all(keysToDelete.map((k) => cache.delete(k)));
   }
   async keys() {
-    const cache = await caches.open(this.ns);
+    const cache = await this.caches.open(this.ns);
     return cache.keys().then((keys) => keys.map((k) => k.url));
   }
   clear() {
-    return caches.delete(this.ns);
+    return this.caches.delete(this.ns);
   }
 }
