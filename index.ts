@@ -1,6 +1,11 @@
 // Description: A simple key-value cache using the browser cache API
 // ---------------------------------------------------------------
 // Interfaces
+declare global {
+  interface Window {
+    EVICTION_INTERVAL?: number;
+  }
+}
 
 /** Cache duration in milliseconds */
 type milliseconds = number;
@@ -51,7 +56,7 @@ export function makeKey(_key: string, namespace: string = DEFAULT_NAMESPACE) {
   return isValidURL(key) ? key : key + `:ns=${namespace}`;
 }
 class CacheWorker {
-  private EVICTION_INTERVAL = 1000 * 60;
+  private EVICTION_INTERVAL = window.EVICTION_INTERVAL || 1000 * 60;
   private intervalId: ReturnType<typeof setInterval> | null = null;
   constructor(
     private caches: CacheStorage,
@@ -66,7 +71,10 @@ class CacheWorker {
     }
   }
   private sanitize() {
-    this.intervalId = setInterval(this.evictKey, this.EVICTION_INTERVAL);
+    this.intervalId = setInterval(
+      () => this.evictKey(),
+      this.EVICTION_INTERVAL
+    );
     window.addEventListener("unload", () => {
       if (this.intervalId) clearInterval(this.intervalId);
     });
@@ -88,6 +96,7 @@ export default class KeyvCache<T> implements CacheHandlers<T> {
   constructor(opt?: CacheOptions) {
     this.ns = opt?.namespace || DEFAULT_NAMESPACE;
     this.maxSize = opt?.maxSize && opt.maxSize <= 10000 ? opt.maxSize : 10000;
+
     if (isBrowser()) {
       const cacheWorker = new CacheWorker(this.caches, this.ns, this.maxSize);
       cacheWorker.start();
