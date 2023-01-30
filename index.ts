@@ -19,7 +19,7 @@ export interface CacheOptions {
 // ---------------------------------------------------------------
 // Helpers
 export function makeResponse(result: any, ttl: number) {
-  return new Response(JSON.stringify(result), {
+  return new Response(new Blob([JSON.stringify(result)]), {
     headers: { timestamp: `${Date.now()}`, ttl: `${ttl}` },
   });
 }
