@@ -15,6 +15,8 @@ export interface CacheHandlers<T> {
 }
 export interface CacheOptions {
   namespace?: string;
+  /** the maximum number of keys allowed in the cache  */
+  maxSize?: number;
 }
 // ---------------------------------------------------------------
 // Helpers
@@ -46,8 +48,11 @@ export function makeKey(_key: string, namespace: string = DEFAULT_NAMESPACE) {
 export default class KeyvCache<T> implements CacheHandlers<T> {
   /** cache namespace */
   private ns: string;
+  private maxSize: number;
   constructor(opt?: CacheOptions) {
     this.ns = opt?.namespace || DEFAULT_NAMESPACE;
+    this.maxSize = opt?.maxSize && opt.maxSize <= 10000 ? opt.maxSize : 10000;
+    this.runSanitization();
   }
 
   get caches() {
@@ -55,6 +60,19 @@ export default class KeyvCache<T> implements CacheHandlers<T> {
       throw new ReferenceError("keyv-cache only works in the browser");
     }
     return window.caches;
+  }
+
+  private runSanitization() {
+    const ONE_MINUTE = 1000 * 60;
+    setInterval(() => this.sanitizeCache(), ONE_MINUTE);
+  }
+
+  async sanitizeCache() {
+    const cache = await this.caches.open(this.ns);
+    const keys = await cache.keys();
+    if (keys.length >= this.maxSize) {
+      await cache.delete(keys[0]);
+    }
   }
 
   async set(key: string, value: T, ttl: milliseconds) {
