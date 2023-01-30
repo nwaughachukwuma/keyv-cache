@@ -40,6 +40,32 @@ export function makeKey(_key: string, namespace: string = DEFAULT_NAMESPACE) {
   const key = decodeURIComponent(_key);
   return isValidURL(key) ? key : key + `:ns=${namespace}`;
 }
+class CacheWorker {
+  private EVICTION_INTERVAL = 1000 * 60;
+  private intervalId: ReturnType<typeof setInterval> | null = null;
+  constructor(
+    private caches: CacheStorage,
+    private ns: string,
+    private maxSize: number
+  ) {}
+  private async evictKey() {
+    const cache = await this.caches.open(this.ns);
+    const keys = await cache.keys();
+    if (keys.length >= this.maxSize) {
+      await cache.delete(keys[0]);
+    }
+  }
+  private sanitize() {
+    this.intervalId = setInterval(this.evictKey, this.EVICTION_INTERVAL);
+    window.addEventListener("unload", () => {
+      if (this.intervalId) clearInterval(this.intervalId);
+    });
+  }
+  /** run a list of operations on the cache-worker */
+  start() {
+    this.sanitize();
+  }
+}
 // ---------------------------------------------------------------
 // implementation
 /**
@@ -52,7 +78,10 @@ export default class KeyvCache<T> implements CacheHandlers<T> {
   constructor(opt?: CacheOptions) {
     this.ns = opt?.namespace || DEFAULT_NAMESPACE;
     this.maxSize = opt?.maxSize && opt.maxSize <= 10000 ? opt.maxSize : 10000;
-    this.runSanitization();
+    if (isBrowser()) {
+      const cacheWorker = new CacheWorker(this.caches, this.ns, this.maxSize);
+      cacheWorker.start();
+    }
   }
 
   get caches() {
@@ -60,19 +89,6 @@ export default class KeyvCache<T> implements CacheHandlers<T> {
       throw new ReferenceError("keyv-cache only works in the browser");
     }
     return window.caches;
-  }
-
-  private runSanitization() {
-    const ONE_MINUTE = 1000 * 60;
-    setInterval(() => this.sanitizeCache(), ONE_MINUTE);
-  }
-
-  async sanitizeCache() {
-    const cache = await this.caches.open(this.ns);
-    const keys = await cache.keys();
-    if (keys.length >= this.maxSize) {
-      await cache.delete(keys[0]);
-    }
   }
 
   async set(key: string, value: T, ttl: milliseconds) {
