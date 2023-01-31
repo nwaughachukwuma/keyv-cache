@@ -1,11 +1,6 @@
 // Description: A simple key-value cache using the browser cache API
 // ---------------------------------------------------------------
 // Interfaces
-declare global {
-  interface Window {
-    EVICTION_INTERVAL?: number;
-  }
-}
 
 /** Cache duration in milliseconds */
 type milliseconds = number;
@@ -20,8 +15,6 @@ export interface CacheHandlers<T> {
 }
 export interface CacheOptions {
   namespace?: string;
-  /** the maximum number of keys allowed in the cache  */
-  maxSize?: number;
 }
 // ---------------------------------------------------------------
 // Helpers
@@ -45,35 +38,6 @@ export function makeKey(_key: string, namespace: string = DEFAULT_NAMESPACE) {
   const key = decodeURIComponent(_key);
   return isValidURL(key) ? key : key + `:ns=${namespace}`;
 }
-class CacheWorker {
-  private EVICTION_INTERVAL = window.EVICTION_INTERVAL || 1000 * 60;
-  private intervalId: ReturnType<typeof setInterval> | null = null;
-  constructor(
-    private caches: CacheStorage,
-    private ns: string,
-    private maxSize: number
-  ) {}
-  private async evictKey() {
-    const cache = await this.caches.open(this.ns);
-    const keys = await cache.keys();
-    if (keys.length >= this.maxSize) {
-      await cache.delete(keys[0]);
-    }
-  }
-  private sanitize() {
-    this.intervalId = setInterval(
-      () => this.evictKey(),
-      this.EVICTION_INTERVAL
-    );
-    window.addEventListener("unload", () => {
-      if (this.intervalId) clearInterval(this.intervalId);
-    });
-  }
-  /** run a list of operations on the cache-worker */
-  start() {
-    this.sanitize();
-  }
-}
 // ---------------------------------------------------------------
 // implementation
 /**
@@ -82,15 +46,8 @@ class CacheWorker {
 export default class KeyvCache<T> implements CacheHandlers<T> {
   /** cache namespace */
   private ns: string;
-  private maxSize: number;
   constructor(opt?: CacheOptions) {
     this.ns = opt?.namespace || DEFAULT_NAMESPACE;
-    this.maxSize = opt?.maxSize && opt.maxSize <= 10000 ? opt.maxSize : 10000;
-
-    if (isBrowser()) {
-      const cacheWorker = new CacheWorker(this.caches, this.ns, this.maxSize);
-      cacheWorker.start();
-    }
   }
 
   get caches() {
