@@ -16,10 +16,20 @@ export interface CacheHandlers<T> {
 export interface CacheOptions {
   namespace?: string;
 }
+const getCircularReplacer = () => {
+  const seen = new WeakSet();
+  return (_key: string, value: any) => {
+    if (typeof value === "object" && value !== null) {
+      if (seen.has(value)) return;
+      seen.add(value);
+    }
+    return value;
+  };
+};
 // ---------------------------------------------------------------
 // Helpers
 export function makeResponse(result: any, ttl: number) {
-  return new Response(new Blob([JSON.stringify(result)]), {
+  return new Response(JSON.stringify(result, getCircularReplacer()), {
     headers: { timestamp: `${Date.now()}`, ttl: `${ttl}` },
   });
 }
