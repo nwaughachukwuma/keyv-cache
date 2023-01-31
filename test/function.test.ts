@@ -57,14 +57,15 @@ describe("functions test for browser environment", () => {
 
     test("can get cache item", async () => {
       const cache = getCache();
-      await cache.set("myKey", "myValue", 3000); // Set a TTL of 1 second
+      const val = { v: "myValue" };
+      await cache.set("myKey", val, 3000); // Set a TTL of 3 second
 
       // get the wrong key
       const wrongValue = await cache.get("myKey2");
       expect(wrongValue).toBe(null);
 
       const value = await cache.get("myKey");
-      expect(value).toBe("myValue");
+      expect(value).toMatchObject(val);
     });
 
     test("cache item is automatically removed after TTL", async () => {
