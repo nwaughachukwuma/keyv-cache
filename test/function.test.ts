@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import delay from "delay";
-import KeyvCache, { makeKey } from "../lib/index.js";
+import KeyvCache from "../lib/index.js";
 import CacheMock from "browser-cache-mock";
 
 const cacheMock = new CacheMock();
@@ -23,8 +23,8 @@ beforeAll(() => {
   global.window.caches = window.caches;
 });
 
-function getCache(namespace?: string, maxSize?: number) {
-  const cache = new KeyvCache({ namespace, maxSize });
+function getCache(namespace?: string) {
+  const cache = new KeyvCache({ namespace });
   if (!cache) {
     throw new Error("cache is not defined");
   }
@@ -107,7 +107,7 @@ describe("functions test for browser environment", () => {
       await cache.set(key, "myValue", 3000);
       const keys = await cache.keys();
       expect(keys).toHaveLength(1);
-      expect(keys).toContain(makeKey(key));
+      expect(keys).toContain(cache.makeKey(key));
     });
 
     test("can delete a cache namespace", async () => {
@@ -155,22 +155,6 @@ describe("functions test for browser environment", () => {
 
       expect(await cache.has("myKey")).toBe(false);
       expect(await cache2.has("otherKey")).toBe(true);
-    });
-  });
-
-  describe("test key eviction with maxSize", () => {
-    test("first key is evicted when maxSize is reached", async () => {
-      const cache = getCache("my-namespace", 1);
-      await cache.set("myKey", "myValue", 3000);
-
-      await delay(1500);
-
-      await cache.set("myKey2", "myValue2", 3000);
-
-      expect(await cache.has("myKey")).toBe(false);
-
-      const keys = await cache.keys();
-      expect(keys).toHaveLength(1);
     });
   });
 });
