@@ -60,7 +60,7 @@ class CacheWorker {
     const now = Date.now();
     const timestamp = keyRes.headers.get("timestamp") || now;
     const ttl = keyRes.headers.get("ttl") || 0;
-    return +ttl + +timestamp > now;
+    return +ttl + +timestamp >= now;
   }
 }
 // ---------------------------------------------------------------
