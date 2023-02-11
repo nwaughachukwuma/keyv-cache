@@ -1,7 +1,5 @@
-// Description: A simple key-value cache using the browser cache API
-// ---------------------------------------------------------------
 // Interfaces
-/** Cache duration in milliseconds */
+/** duration in milliseconds */
 type milliseconds = number;
 export interface CacheHandlers<T> {
   get(key: string): Promise<T | undefined>;
@@ -16,7 +14,9 @@ export interface CacheOptions {
   /** cache namespace */
   namespace?: string;
 }
-const getCircularReplacer = () => {
+// ---------------------------------------------------------------
+// Helpers
+function getCircularReplacer() {
   const seen = new WeakSet();
   return (_key: string, value: any) => {
     if (typeof value === "object" && value !== null) {
@@ -25,9 +25,7 @@ const getCircularReplacer = () => {
     }
     return value;
   };
-};
-// ---------------------------------------------------------------
-// Helpers
+}
 export function makeResponse(result: any, ttl: number) {
   return new Response(JSON.stringify(result, getCircularReplacer()), {
     headers: { timestamp: `${Date.now()}`, ttl: `${ttl}` },
@@ -44,6 +42,8 @@ export function isBrowser() {
   return typeof window !== "undefined";
 }
 const DEFAULT_NAMESPACE = "keyv-cache";
+// ---------------------------------------------------------------
+// implementation
 class CacheWorker {
   constructor(protected ns: string) {}
   get caches() {
@@ -63,11 +63,6 @@ class CacheWorker {
     return +ttl + +timestamp >= now;
   }
 }
-// ---------------------------------------------------------------
-// implementation
-/**
- * @param namespace cache namespace
- */
 export default class KeyvCache<T>
   extends CacheWorker
   implements CacheHandlers<T>
