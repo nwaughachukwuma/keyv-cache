@@ -48,18 +48,25 @@ export function makeKey(_key: string, namespace: string = DEFAULT_NAMESPACE) {
 }
 // ---------------------------------------------------------------
 // implementation
-export default class KeyvCache<T> implements CacheHandlers<T> {
-  /** cache namespace */
-  private ns: string;
-  constructor(opt?: CacheOptions) {
-    this.ns = opt?.namespace || DEFAULT_NAMESPACE;
-  }
-
+class CacheWorker {
+  constructor(protected ns: string) {}
   get caches() {
     if (!isBrowser()) {
       throw new ReferenceError("keyv-cache only works in the browser");
     }
     return window.caches;
+  }
+}
+export default class KeyvCache<T>
+  extends CacheWorker
+  implements CacheHandlers<T>
+{
+  /** cache namespace */
+  protected ns: string;
+  constructor(opt?: CacheOptions) {
+    const ns = opt?.namespace || DEFAULT_NAMESPACE;
+    super(ns);
+    this.ns = ns;
   }
 
   async set(key: string, value: T, ttl: milliseconds) {
