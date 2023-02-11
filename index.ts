@@ -16,21 +16,6 @@ export interface CacheOptions {
 }
 // ---------------------------------------------------------------
 // Helpers
-function getCircularReplacer() {
-  const seen = new WeakSet();
-  return (_key: string, value: any) => {
-    if (typeof value === "object" && value !== null) {
-      if (seen.has(value)) return;
-      seen.add(value);
-    }
-    return value;
-  };
-}
-export function makeResponse(result: any, ttl: number) {
-  return new Response(JSON.stringify(result, getCircularReplacer()), {
-    headers: { timestamp: `${Date.now()}`, ttl: `${ttl}` },
-  });
-}
 export function isValidURL(str: string) {
   try {
     return !!new URL(str);
@@ -40,6 +25,16 @@ export function isValidURL(str: string) {
 }
 export function isBrowser() {
   return typeof window !== "undefined";
+}
+function getCircularReplacer() {
+  const seen = new WeakSet();
+  return (_key: string, value: any) => {
+    if (typeof value === "object" && value !== null) {
+      if (seen.has(value)) return;
+      seen.add(value);
+    }
+    return value;
+  };
 }
 const DEFAULT_NAMESPACE = "keyv-cache";
 // ---------------------------------------------------------------
@@ -62,6 +57,11 @@ class CacheWorker {
     const ttl = keyRes.headers.get("ttl") || 0;
     return +ttl + +timestamp >= now;
   }
+  protected makeResponse(result: any, ttl: number) {
+    return new Response(JSON.stringify(result, getCircularReplacer()), {
+      headers: { timestamp: `${Date.now()}`, ttl: `${ttl}` },
+    });
+  }
 }
 export default class KeyvCache<T>
   extends CacheWorker
@@ -76,7 +76,7 @@ export default class KeyvCache<T>
 
   async set(key: string, value: T, ttl: milliseconds) {
     const cache = await this.caches.open(this.ns);
-    await cache.put(this.makeKey(key), makeResponse(value, ttl));
+    await cache.put(this.makeKey(key), this.makeResponse(value, ttl));
   }
   async get(_key: string) {
     const key = this.makeKey(_key);
