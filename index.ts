@@ -1,8 +1,6 @@
-// Description: A simple key-value cache using the browser cache API
-// ---------------------------------------------------------------
 // Interfaces
 
-/** Cache duration in milliseconds */
+/** duration in milliseconds */
 type milliseconds = number;
 export interface CacheHandlers<T> {
   get(key: string): Promise<T | undefined>;
@@ -16,6 +14,8 @@ export interface CacheHandlers<T> {
 export interface CacheOptions {
   namespace?: string;
 }
+// ---------------------------------------------------------------
+// Helpers
 const getCircularReplacer = () => {
   const seen = new WeakSet();
   return (_key: string, value: any) => {
@@ -26,8 +26,6 @@ const getCircularReplacer = () => {
     return value;
   };
 };
-// ---------------------------------------------------------------
-// Helpers
 export function makeResponse(result: any, ttl: number) {
   return new Response(JSON.stringify(result, getCircularReplacer()), {
     headers: { timestamp: `${Date.now()}`, ttl: `${ttl}` },
@@ -50,9 +48,6 @@ export function makeKey(_key: string, namespace: string = DEFAULT_NAMESPACE) {
 }
 // ---------------------------------------------------------------
 // implementation
-/**
- * @param namespace cache namespace
- */
 export default class KeyvCache<T> implements CacheHandlers<T> {
   /** cache namespace */
   private ns: string;
