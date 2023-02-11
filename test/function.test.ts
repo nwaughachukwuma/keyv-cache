@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import delay from "delay";
-import KeyvCache, { makeKey } from "../lib/index.js";
+import KeyvCache from "../lib/index.js";
 import CacheMock from "browser-cache-mock";
 
 const cacheMock = new CacheMock();
@@ -107,7 +107,7 @@ describe("functions test for browser environment", () => {
       await cache.set(key, "myValue", 3000);
       const keys = await cache.keys();
       expect(keys).toHaveLength(1);
-      expect(keys).toContain(makeKey(key));
+      expect(keys).toContain(cache.makeKey(key));
     });
 
     test("can delete a cache namespace", async () => {
