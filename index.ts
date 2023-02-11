@@ -1,8 +1,5 @@
-// Description: A simple key-value cache using the browser cache API
-// ---------------------------------------------------------------
 // Interfaces
-
-/** Cache duration in milliseconds */
+/** duration in milliseconds */
 type milliseconds = number;
 export interface CacheHandlers<T> {
   get(key: string): Promise<T | undefined>;
@@ -14,9 +11,12 @@ export interface CacheHandlers<T> {
   clear(): Promise<boolean>;
 }
 export interface CacheOptions {
+  /** cache namespace */
   namespace?: string;
 }
-const getCircularReplacer = () => {
+// ---------------------------------------------------------------
+// Helpers
+function getCircularReplacer() {
   const seen = new WeakSet();
   return (_key: string, value: any) => {
     if (typeof value === "object" && value !== null) {
@@ -25,9 +25,7 @@ const getCircularReplacer = () => {
     }
     return value;
   };
-};
-// ---------------------------------------------------------------
-// Helpers
+}
 export function makeResponse(result: any, ttl: number) {
   return new Response(JSON.stringify(result, getCircularReplacer()), {
     headers: { timestamp: `${Date.now()}`, ttl: `${ttl}` },
@@ -44,55 +42,60 @@ export function isBrowser() {
   return typeof window !== "undefined";
 }
 const DEFAULT_NAMESPACE = "keyv-cache";
-export function makeKey(_key: string, namespace: string = DEFAULT_NAMESPACE) {
-  const key = decodeURIComponent(_key);
-  return isValidURL(key) ? key : key + `:ns=${namespace}`;
-}
 // ---------------------------------------------------------------
 // implementation
-/**
- * @param namespace cache namespace
- */
-export default class KeyvCache<T> implements CacheHandlers<T> {
-  /** cache namespace */
-  private ns: string;
-  constructor(opt?: CacheOptions) {
-    this.ns = opt?.namespace || DEFAULT_NAMESPACE;
-  }
-
+class CacheWorker {
+  constructor(protected ns: string) {}
   get caches() {
     if (!isBrowser()) {
       throw new ReferenceError("keyv-cache only works in the browser");
     }
     return window.caches;
   }
+  makeKey(_key: string) {
+    const key = decodeURIComponent(_key);
+    return isValidURL(key) ? key : key + `:ns=${this.ns}`;
+  }
+  protected validKey(keyRes: Response) {
+    const now = Date.now();
+    const timestamp = keyRes.headers.get("timestamp") || now;
+    const ttl = keyRes.headers.get("ttl") || 0;
+    return +ttl + +timestamp >= now;
+  }
+}
+export default class KeyvCache<T>
+  extends CacheWorker
+  implements CacheHandlers<T>
+{
+  protected ns: string;
+  constructor(opt?: CacheOptions) {
+    const ns = opt?.namespace || DEFAULT_NAMESPACE;
+    super(ns);
+    this.ns = ns;
+  }
 
   async set(key: string, value: T, ttl: milliseconds) {
     const cache = await this.caches.open(this.ns);
-    await cache.put(makeKey(key, this.ns), makeResponse(value, ttl));
+    await cache.put(this.makeKey(key), makeResponse(value, ttl));
   }
   async get(_key: string) {
-    const key = makeKey(_key, this.ns);
+    const key = this.makeKey(_key);
     const cache = await this.caches.open(this.ns);
-    const response = await cache.match(key);
-    if (!response?.ok) return null;
-
-    const now = Date.now();
-    const timestamp = response.headers.get("timestamp") || now;
-    const ttl = response.headers.get("ttl") || 0;
-    if (+ttl + +timestamp < now) {
+    const keyRes = await cache.match(key);
+    if (!keyRes?.ok) return null;
+    if (!this.validKey(keyRes)) {
       await this.remove(key);
       return null;
     }
 
-    return response.clone().json();
+    return keyRes.clone().json();
   }
   async has(key: string) {
     return !!(await this.get(key));
   }
   async remove(key: string) {
     const cache = await this.caches.open(this.ns);
-    return cache.delete(makeKey(key, this.ns));
+    return cache.delete(this.makeKey(key));
   }
   async removePattern(pattern: string) {
     const cache = await this.caches.open(this.ns);
