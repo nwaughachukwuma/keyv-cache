@@ -16,14 +16,14 @@ export interface CacheOptions {
 }
 // ---------------------------------------------------------------
 // Helpers
-export function isValidURL(str: string) {
+export function validURL(str: string) {
   try {
     return !!new URL(str);
   } catch (e) {
     return false;
   }
 }
-export function isBrowser() {
+export function browser() {
   return typeof window !== "undefined";
 }
 function getCircularReplacer() {
@@ -42,14 +42,14 @@ const DEFAULT_NAMESPACE = "keyv-cache";
 class CacheWorker {
   constructor(protected ns: string) {}
   get caches() {
-    if (!isBrowser()) {
+    if (!browser()) {
       throw new ReferenceError("keyv-cache only works in the browser");
     }
     return window.caches;
   }
   makeKey(_key: string) {
     const key = decodeURIComponent(_key);
-    return isValidURL(key) ? key : key + `:ns=${this.ns}`;
+    return validURL(key) ? key : key + `:ns=${this.ns}`;
   }
   protected validKey(keyRes: Response) {
     const now = Date.now();
