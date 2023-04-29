@@ -1,9 +1,9 @@
 // Interfaces
 /** duration in milliseconds */
-type milliseconds = number;
+type Milliseconds = number;
 export interface CacheHandlers<T> {
-  get(key: string): Promise<T | undefined>;
-  set(key: string, value: T, ttl: milliseconds): Promise<void>;
+  get(key: string): Promise<T | null>;
+  set(key: string, value: T, ttl: Milliseconds): Promise<string>;
   has(key: string): Promise<boolean>;
   remove(key: string): Promise<boolean>;
   removePattern(pattern: string): Promise<Array<boolean>>;
@@ -14,16 +14,15 @@ export interface CacheOptions {
   /** cache namespace */
   namespace?: string;
 }
-// ---------------------------------------------------------------
 // Helpers
-export function validURL(str: string) {
+function isValidURL(str: string) {
   try {
     return !!new URL(str);
   } catch (e) {
     return false;
   }
 }
-export function browser() {
+function isBrowser() {
   return typeof window !== "undefined";
 }
 function getCircularReplacer() {
@@ -36,22 +35,20 @@ function getCircularReplacer() {
     return value;
   };
 }
-const DEFAULT_NAMESPACE = "keyv-cache";
-// ---------------------------------------------------------------
-// implementation
+// Implementation
 class CacheWorker {
   constructor(protected ns: string) {}
   get caches() {
-    if (!browser()) {
+    if (!isBrowser()) {
       throw new ReferenceError("keyv-cache only works in the browser");
     }
     return window.caches;
   }
-  makeKey(_key: string) {
-    const key = decodeURIComponent(_key);
-    return validURL(key) ? key : key + `:ns=${this.ns}`;
+  makeKey(key: string) {
+    const decodedKey = decodeURIComponent(key);
+    return isValidURL(decodedKey) ? decodedKey : decodedKey + `:ns=${this.ns}`;
   }
-  protected validKey(keyRes: Response) {
+  protected isValidKey(keyRes: Response) {
     const now = Date.now();
     const timestamp = keyRes.headers.get("timestamp") || now;
     const ttl = keyRes.headers.get("ttl") || 0;
@@ -67,24 +64,23 @@ export default class KeyvCache<T>
   extends CacheWorker
   implements CacheHandlers<T>
 {
-  protected ns: string;
   constructor(opt?: CacheOptions) {
-    const ns = opt?.namespace || DEFAULT_NAMESPACE;
+    const ns = opt?.namespace || "keyv-cache";
     super(ns);
     this.ns = ns;
   }
 
-  async set(key: string, value: T, ttl: milliseconds) {
+  async set(key: string, value: T, ttl: Milliseconds) {
     const cache = await this.caches.open(this.ns);
     await cache.put(this.makeKey(key), this.makeResponse(value, ttl));
+    return "OK";
   }
-  async get(_key: string) {
-    const key = this.makeKey(_key);
+  async get(key: string) {
+    const formattedKey = this.makeKey(key);
     const cache = await this.caches.open(this.ns);
-    const keyRes = await cache.match(key);
-    if (!keyRes?.ok) return null;
-    if (!this.validKey(keyRes)) {
-      await this.remove(key);
+    const keyRes = await cache.match(formattedKey);
+    if (!keyRes?.ok || !this.isValidKey(keyRes)) {
+      await this.remove(formattedKey);
       return null;
     }
 

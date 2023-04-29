@@ -13,7 +13,7 @@ if (cache) {
 
   // check the methods return type signatures
   expectType<Promise<any>>(cache.get("key"));
-  expectType<Promise<void>>(cache.set("key", "value", 1000));
+  expectType<Promise<string>>(cache.set("key", "value", 1000));
   expectType<Promise<boolean>>(cache.has("key"));
   expectType<Promise<boolean>>(cache.remove("key"));
   expectType<Promise<boolean[]>>(cache.removePattern("key"));
