@@ -1,6 +1,6 @@
 # Keyv-cache 🚀
 
-A ~1kb `key/value` wrapper (with TTL) for the browser [Cache API](https://developer.mozilla.org/en-US/docs/Web/API/Cache) with zero dependencies.
+A ~1kb `key/value` wrapper (with TTL) for the browser [Cache API](https://developer.mozilla.org/en-US/docs/Web/API/Cache) with zero dependencies. Fallsback to inmemory cache if cache-storage isn't supported.
 
 ## Key Features
 
