@@ -1,15 +1,18 @@
 import { expectType, expectAssignable } from "tsd";
 import KeyvCache, { CacheHandlers } from "./index";
 
-const cache = new KeyvCache<any>();
+const cache = KeyvCache<any>();
 expectAssignable<CacheHandlers<any>>(cache);
 
 if (cache) {
   // check the method signatures
-  expectType<CacheHandlers<any>["get"]>(cache.get);
-  expectType<CacheHandlers<any>["set"]>(cache.set);
-  expectType<CacheHandlers<any>["has"]>(cache.has);
-  expectType<CacheHandlers<any>["remove"]>(cache.remove);
+  expectAssignable<CacheHandlers<any>["get"]>(cache.get);
+  expectAssignable<CacheHandlers<any>["set"]>(cache.set);
+  expectAssignable<CacheHandlers<any>["has"]>(cache.has);
+  expectAssignable<CacheHandlers<any>["remove"]>(cache.remove);
+  expectAssignable<CacheHandlers<any>["removePattern"]>(cache.removePattern);
+  expectAssignable<CacheHandlers<any>["keys"]>(cache.keys);
+  expectAssignable<CacheHandlers<any>["clear"]>(cache.clear);
 
   // check the methods return type signatures
   expectType<Promise<any>>(cache.get("key"));
@@ -18,4 +21,5 @@ if (cache) {
   expectType<Promise<boolean>>(cache.remove("key"));
   expectType<Promise<boolean[]>>(cache.removePattern("key"));
   expectType<Promise<string[]>>(cache.keys());
+  expectType<Promise<boolean>>(cache.clear());
 }
