@@ -47,5 +47,8 @@
     "tsd": "^0.28.1",
     "typescript": "^5.0.4",
     "whatwg-fetch": "^3.6.2"
+  },
+  "engines": {
+    "node": ">=16"
   }
 }
