@@ -1,7 +1,6 @@
-
 # Keyv-cache 🚀
 
- A ~1kb `key/value` wrapper (with TTL) for the browser [Cache API](https://developer.mozilla.org/en-US/docs/Web/API/Cache) with zero dependencies.
+A ~1kb `key/value` wrapper (with TTL) for the browser [Cache API](https://developer.mozilla.org/en-US/docs/Web/API/Cache) with zero dependencies.
 
 ## Key Features
 
@@ -21,16 +20,15 @@ npm install keyv-cache
 ## 📖 Usage
 
 ```js
-
-import KeyvCache from 'keyv-cache';
-const cache = new KeyvCache({namespace:  'my-app'});
+import KeyvCache from "keyv-cache";
+const cache = KeyvCache({ namespace: "my-app" });
 
 // within an async function
 const ONE_HOUR = 60 * 60 * 1000;
-await cache.set('foo', 'bar', ONE_HOUR)
+await cache.set("foo", "bar", ONE_HOUR);
 
 // somewhere/sometime later
-const value = await cache.get('foo')
+const value = await cache.get("foo");
 ```
 
 ## API
@@ -38,7 +36,7 @@ const value = await cache.get('foo')
 To create a new KeyvCache instance:
 
 ```js
-KeyvCache(options)
+KeyvCache(options);
 ```
 
 ### options: { namespace: string }
