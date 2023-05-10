@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import delay from "delay";
-import KeyvCache from "../lib/index.js";
+import KeyvCache, { makeKey } from "../lib/index.js";
 import CacheMock from "browser-cache-mock";
 
 const cacheMock = new CacheMock();
@@ -20,13 +20,13 @@ beforeAll(() => {
     open: async () => cacheMock,
     delete: cacheDeleteMock,
   };
-  global.window.caches = window.caches;
+  global.caches = window.caches;
 });
 
 function getCache(namespace?: string) {
-  const cache = new KeyvCache({ namespace });
-  if (!cache) {
-    throw new Error("cache is not defined");
+  const cache = KeyvCache({ namespace });
+  if (cache.type !== "browser") {
+    throw new Error("Cache is not browser cache");
   }
   return cache;
 }
@@ -107,7 +107,7 @@ describe("functions test for browser environment", () => {
       await cache.set(key, "myValue", 3000);
       const keys = await cache.keys();
       expect(keys).toHaveLength(1);
-      expect(keys).toContain(cache.makeKey(key));
+      expect(keys).toContain(makeKey(key));
     });
 
     test("can delete a cache namespace", async () => {

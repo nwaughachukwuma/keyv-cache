@@ -3,13 +3,11 @@
  */
 import KeyvCache from "../lib/index.js";
 
-function getCache() {
-  const caches = new KeyvCache();
-  if (!caches) {
-    throw new Error("caches is not defined");
-  }
-  return caches;
-}
+let cache = KeyvCache();
+
+beforeEach(() => {
+  cache = KeyvCache();
+});
 
 beforeAll(() => {
   global.caches = window.caches;
@@ -17,47 +15,34 @@ beforeAll(() => {
 
 describe("base test", () => {
   test("caches is defined", () => {
-    const caches = getCache();
-    expect(caches).not.toBeNull();
+    expect(cache).not.toBeNull();
   });
 
   test("caches has set method", () => {
-    const caches = getCache();
-    expect(caches.set).not.toBeNull();
+    expect(cache.set).not.toBeNull();
   });
 
   test("caches has get method", () => {
-    const caches = getCache();
-    expect(caches.get).not.toBeNull();
+    expect(cache.get).not.toBeNull();
   });
 
   test("caches has 'has' method", () => {
-    const caches = getCache();
-    expect(caches.has).not.toBeNull();
+    expect(cache.has).not.toBeNull();
   });
 
   test("caches has remove method", () => {
-    const caches = getCache();
-    expect(caches.remove).not.toBeNull();
+    expect(cache.remove).not.toBeNull();
   });
 
   test("caches has keys method", () => {
-    const caches = getCache();
-    expect(caches.keys).not.toBeNull();
+    expect(cache.keys).not.toBeNull();
   });
 
   test("caches has removePattern method", () => {
-    const caches = getCache();
-    expect(caches.removePattern).not.toBeNull();
+    expect(cache.removePattern).not.toBeNull();
   });
 
   test("caches has clear method", () => {
-    const caches = getCache();
-    expect(caches.clear).not.toBeNull();
-  });
-
-  test("can access internal caches", async () => {
-    const scopedCaches = () => getCache().caches;
-    expect(scopedCaches).not.toThrow();
+    expect(cache.clear).not.toBeNull();
   });
 });
