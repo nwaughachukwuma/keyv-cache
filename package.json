@@ -1,6 +1,6 @@
 {
   "name": "keyv-cache",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "~1kb key/value store wrapper for the browser cache-api, with zero-dependency",
   "repository": "git@github.com:nwaughachukwuma/keyv-cache.git",
   "author": "Chukwuma Nwaugha <nwaughac@gmail.com>",

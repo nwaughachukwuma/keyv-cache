@@ -52,7 +52,7 @@ export function makeResponse(result: any, ttl: number) {
   });
 }
 
-export default function KeyvCache<T>(options?: CacheOptions) {
+export default function KeyvCache<T>(options?: CacheOptions): CacheHandlers<T> {
   return !isBrowser() || !window.caches || !window.caches.open
     ? new InMemoryCache<T>()
     : new BrowserCache<T>(options);
