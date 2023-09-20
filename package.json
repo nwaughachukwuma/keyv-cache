@@ -25,7 +25,8 @@
     "!lib/index.test-d.ts"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsup",
+    "tsc": "tsc",
     "compile": "tsc -p .",
     "tsd:prep": "cp index.test-d.ts ./lib/index.test-d.ts",
     "tsd": "yarn tsd:prep && tsd",
@@ -45,6 +46,7 @@
     "jsdom": "^22.0.0",
     "ts-node": "^10.9.1",
     "tsd": "^0.28.1",
+    "tsup": "^7.2.0",
     "typescript": "^5.0.4",
     "whatwg-fetch": "^3.6.2"
   },
