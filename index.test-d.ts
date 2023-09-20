@@ -1,5 +1,5 @@
 import { expectType, expectAssignable } from "tsd";
-import KeyvCache, { CacheHandlers } from "./index";
+import KeyvCache, { type CacheHandlers } from "./index";
 
 const cache = KeyvCache<any>();
 expectAssignable<CacheHandlers<any>>(cache);
