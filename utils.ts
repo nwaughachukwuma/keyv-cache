@@ -21,10 +21,12 @@ export function getCircularReplacer() {
     return value;
   };
 }
+
 export function makeKey(key: string, namespace: string = "keyv-cache") {
   const decodedKey = decodeURIComponent(key);
   return isValidURL(decodedKey) ? decodedKey : decodedKey + `:ns=${namespace}`;
 }
+
 export function isValidKey(keyRes: Response) {
   const now = Date.now();
   const timestamp = keyRes.headers.get("timestamp") || now;
