@@ -40,34 +40,47 @@ jobs:
         node-version:
           - 16
           - 18
+          - 20
     steps:
       - uses: actions/checkout@v3
+
       - name: Set Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
+
       - uses: actions/cache@v3
         id: cache-deps
         with:
           path: |
             **/node_modules
           key: ${{ runner.os }}-${{ matrix.node-version }}-modules-${{ hashFiles('**/yarn.lock') }}
+
       - name: install dependencies
         uses: borales/actions-yarn@v4
         with:
           cmd: install
-      - name: build
+
+      - name: build package
         uses: borales/actions-yarn@v4
         with:
           cmd: build
+
+      - name: build types
+        uses: borales/actions-yarn@v4
+        with:
+          cmd: tsc
+
       - name: test types
         uses: borales/actions-yarn@v4
         with:
           cmd: tsd
+
       - name: test functionality
         uses: borales/actions-yarn@v4
         with:
           cmd: test
+
       - uses: actions/upload-artifact@v3
         with:
           name: lib
