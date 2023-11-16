@@ -34,7 +34,7 @@ jobs:
           SHORT_SHA=$(git rev-parse --short HEAD)
           echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_ENV
 
-          RAW=$(git branch -r --contains $GITHUB_REF)
+          RAW=$(git branch -r --contains $GITHUB_REF_NAME)
           TAG_BRANCH_NAME="${RAW##*/}"
           echo "TAG_BRANCH_NAME=$TAG_BRANCH_NAME" >> $GITHUB_ENV
 
