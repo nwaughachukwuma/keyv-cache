@@ -29,9 +29,13 @@ jobs:
 
       - id: prepare_env
         run: |
-          echo "GITHUB_REF=${{ github.ref }}"
+          echo "TAGGED=${{ startsWith(github.ref, 'refs/tags/v') }}" >> $GITHUB_OUTPUT
+          
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          # echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_OUTPUT
+          # echo "GITHUB_REF=${{ github.ref }}"
 
-          RAW=$(git branch -r --contains $GITHUB_REF)
+          RAW=$(git branch -r --contains $SHORT_SHA)
           TAG_BRANCH_NAME="${RAW##*/}"
           echo "TAG_BRANCH_NAME=$TAG_BRANCH_NAME" >> $GITHUB_ENV
 
