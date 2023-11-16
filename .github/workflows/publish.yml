@@ -21,13 +21,18 @@ jobs:
   prepare:
     runs-on: ubuntu-latest
     outputs:
-      TAG_BRANCH: ${{ env.TAG_BRANCH }}
+      TAG_BRANCH: ${{ env.TAG_BRANCH_NAME }}
     steps:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - name: get-tag-branch
-        run: bash .github/scripts/tag_ref.sh ${{ github.ref }}
+
+      - id: prepare_env
+        run: |
+          RAW=$(git branch -r --contains {{ github.ref }})
+          TAG_BRANCH_NAME="${RAW##*/}"
+          echo "TAG_BRANCH_NAME=$TAG_BRANCH_NAME" >> $GITHUB_ENV
+
       - run: echo "${{ toJSON(env) }}"
 
   test:
