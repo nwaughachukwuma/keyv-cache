@@ -22,6 +22,8 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       TAG_BRANCH: ${{ env.TAG_BRANCH_NAME }}
+      SHORT_SHA: ${{ env.SHORT_SHA }}
+      TAGGED: ${{ env.TAGGED }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -34,7 +36,11 @@ jobs:
           SHORT_SHA=$(git rev-parse --short HEAD)
           echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_ENV
 
-          RAW=$(git branch -r --contains $GITHUB_REF_NAME)
+          echo "$SHORT_SHA"
+          echo "$GITHUB_REF"
+          echo "$GITHUB_REF_NAME"
+
+          RAW=$(git branch -r --contains $SHORT_SHA)
           TAG_BRANCH_NAME="${RAW##*/}"
           echo "TAG_BRANCH_NAME=$TAG_BRANCH_NAME" >> $GITHUB_ENV
 
@@ -66,28 +72,23 @@ jobs:
             **/node_modules
           key: ${{ runner.os }}-${{ matrix.node-version }}-modules-${{ hashFiles('**/yarn.lock') }}
 
-      - name: install dependencies
-        uses: borales/actions-yarn@v4
+      - uses: borales/actions-yarn@v4
         with:
           cmd: install
 
-      - name: build package
-        uses: borales/actions-yarn@v4
+      - uses: borales/actions-yarn@v4
         with:
           cmd: build
 
-      - name: build types
-        uses: borales/actions-yarn@v4
+      - uses: borales/actions-yarn@v4
         with:
           cmd: tsc
 
-      - name: test types
-        uses: borales/actions-yarn@v4
+      - uses: borales/actions-yarn@v4
         with:
           cmd: tsd
 
-      - name: test functionality
-        uses: borales/actions-yarn@v4
+      - uses: borales/actions-yarn@v4
         with:
           cmd: test
 
@@ -105,11 +106,13 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: "16.x"
+          node-version: "18.x"
+      
       - uses: actions/download-artifact@v3
         with:
           name: lib
           path: lib
+      
       - uses: heinrichreimer/github-changelog-generator-action@v2.3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
