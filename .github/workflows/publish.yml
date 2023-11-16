@@ -29,7 +29,9 @@ jobs:
 
       - id: prepare_env
         run: |
-          RAW=$(git branch -r --contains ${{ github.ref }})
+          echo "GITHUB_REF=${{ github.ref }}"
+
+          RAW=$(git branch -r --contains $GITHUB_REF)
           TAG_BRANCH_NAME="${RAW##*/}"
           echo "TAG_BRANCH_NAME=$TAG_BRANCH_NAME" >> $GITHUB_ENV
 
