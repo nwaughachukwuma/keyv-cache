@@ -24,7 +24,9 @@ export function getCircularReplacer() {
 
 export function makeKey(key: string, namespace: string = "keyv-cache") {
   const decodedKey = decodeURIComponent(key);
-  return isValidURL(decodedKey) ? decodedKey : decodedKey + `:ns=${namespace}`;
+  return isValidURL(decodedKey)
+    ? decodedKey
+    : `${location.origin}?key=${decodedKey}&ns=${namespace}`;
 }
 
 export function isValidKey(keyRes: Response) {
